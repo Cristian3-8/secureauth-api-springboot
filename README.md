@@ -23,9 +23,13 @@ Sistema completo de autenticación y gestión de usuarios implementado con Sprin
 
 🛠️ Tecnologías
 Backend: Java 17, Spring Boot 3.5.8, Spring Security 6, Spring Data JPA
+
 Frontend: Thymeleaf 3, Bootstrap 5.1.3, Bootstrap Icons, JavaScript
+
 Base de datos: MySQL/MariaDB
+
 Herramientas: Maven, Spring Boot DevTools
+
 
 🚀 Instalación
 Prerrequisitos
@@ -63,10 +67,17 @@ Usuario: usuario / password123
 📁 Estructura del Proyecto
 
 src/main/java/com/secureauth/
+
 ├── config/           # Configuraciones (Security, DataSeeder)
+|
 ├── controller/       # Controladores (Admin, Dashboard, Home)
+|
 ├── dto/             # Data Transfer Objects
+|
 ├── entity/          # Entidades JPA (User, Role)
+|
 ├── repository/      # Repositorios Spring Data JPA
+|
 ├── service/         # Lógica de negocio
+|
 └── util/            # Utilidades
