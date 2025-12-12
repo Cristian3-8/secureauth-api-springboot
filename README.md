@@ -21,6 +21,7 @@ Sistema completo de autenticación y gestión de usuarios implementado con Sprin
 
 ✅ Seguridad robusta: BCrypt, CSRF, protección de rutas
 
+
 🛠️ Tecnologías
 Backend: Java 17, Spring Boot 3.5.8, Spring Security 6, Spring Data JPA
 
@@ -64,20 +65,21 @@ Administrador: admin / admin123
 
 Usuario: usuario / password123
 
+
 📁 Estructura del Proyecto
 
 src/main/java/com/secureauth/
 
 ├── config/           # Configuraciones (Security, DataSeeder)
-|
+
 ├── controller/       # Controladores (Admin, Dashboard, Home)
-|
+
 ├── dto/             # Data Transfer Objects
-|
+
 ├── entity/          # Entidades JPA (User, Role)
-|
+
 ├── repository/      # Repositorios Spring Data JPA
-|
+
 ├── service/         # Lógica de negocio
-|
+
 └── util/            # Utilidades
