@@ -1,4 +1,8 @@
 🔐 SecureAuth API - Sistema de Autenticación Spring Boot
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.8-green)
+![Spring Security](https://img.shields.io/badge/Spring%20Security-6-blue)
+![Java](https://img.shields.io/badge/Java-17-orange)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
 
 Sistema completo de autenticación y gestión de usuarios implementado con Spring Boot 6 y Spring Security 6.
 
