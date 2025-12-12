@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Mensajes Flash -->
+<div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+    [[${successMessage}]]
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    Credenciales incorrectas
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<!-- <div th:if="${param.logout}" class="alert alert-info alert-dismissible fade show" role="alert">
+    Sesión cerrada exitosamente
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div> -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Iniciar Sesión - SecureAuth</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { padding-top: 50px; background-color: #f8f9fa; }
+        .login-card { max-width: 400px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+<!-- Navbar SIMPLE -->
+<nav class="navbar navbar-dark bg-primary fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/}">
+            <i class="fas fa-shield-alt"></i> SecureAuth
+        </a>
+    </div>
+</nav>
+
+<!-- Contenido principal -->
+<div class="container">
+    <div class="login-card card mt-5">
+        <div class="card-header bg-primary text-white text-center">
+            <h4 class="mb-0">
+                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+            </h4>
+        </div>
+        <div class="card-body">
+            <!-- Mostrar mensaje de error si existe -->
+            <div th:if="${param.error}" class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                Usuario o contraseña incorrectos.
+            </div>
+
+            <div th:if="${param.logout}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                Has cerrado sesión exitosamente.
+            </div>
+
+            <!-- Formulario de login -->
+            <form th:action="@{/login}" method="post">
+                <div class="mb-3">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user"></i> Usuario
+                    </label>
+                    <input type="text"
+                           class="form-control"
+                           id="username"
+                           name="username"
+                           placeholder="Ingresa tu usuario"
+                           required
+                           autofocus>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-key"></i> Contraseña
+                    </label>
+                    <input type="password"
+                           class="form-control"
+                           id="password"
+                           name="password"
+                           placeholder="Ingresa tu contraseña"
+                           required>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </button>
+                </div>
+            </form>
+
+            <hr class="my-4">
+
+            <div class="text-center">
+                <p class="mb-2">¿No tienes una cuenta?</p>
+                <a th:href="@{/auth/register}" class="btn btn-outline-success">
+                    <i class="fas fa-user-plus"></i> Registrarse
+                </a>
+            </div>
+        </div>
+        <div class="card-footer text-center text-muted">
+            <small>
+                <i class="fas fa-shield-alt"></i> SecureAuth v1.0
+            </small>
+        </div>
+    </div>
+</div>
+</body>
+</html>

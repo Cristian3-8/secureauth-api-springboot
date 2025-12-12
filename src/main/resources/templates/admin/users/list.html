@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios | SecureAuth Admin</title>
+
+    <!-- Bootstrap 5.1.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+
+    <style>
+        .role-badge { font-size: 0.8em; padding: 0.35em 0.65em; }
+        .status-indicator {
+            width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px;
+        }
+        .status-enabled { background-color: #28a745; }
+        .status-disabled { background-color: #dc3545; }
+        .user-avatar {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, #0d6efd 0%, #6f42c1 100%);
+            color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/dashboard/admin">
+            <i class="bi bi-shield-check"></i> SecureAuth Admin
+        </a>
+        <div class="navbar-nav">
+            <a class="nav-link" href="/dashboard/admin">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a class="nav-link active" href="/admin/users">
+                <i class="bi bi-people-fill"></i> Usuarios
+            </a>
+        </div>
+        <div class="navbar-nav ms-auto">
+            <form action="/logout" method="post" class="d-inline">
+                <button type="submit" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Salir
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Mensajes Flash -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-people-fill me-2"></i>Gestión de Usuarios</h2>
+        <a class="btn btn-primary" href="/admin/users/new">
+            <i class="bi bi-plus-circle"></i> Nuevo Usuario
+        </a>
+    </div>
+
+    <!-- Users Table -->
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td class="fw-bold" th:text="${user.id}">#</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="user-avatar me-3">
+                            <span th:text="${user.username.substring(0, 1).toUpperCase()}"></span>
+                        </div>
+                        <div>
+                            <strong th:text="${user.username}"></strong>
+                            <div class="text-muted small" th:text="${user.email}"></div>
+                        </div>
+                    </div>
+                </td>
+                <td th:text="${user.email}"></td>
+                <td>
+                    <div th:each="role : ${user.roles}">
+                                <span th:if="${role.name == 'ADMIN'}" class="badge bg-danger role-badge">
+                                    <i class="bi bi-shield-check"></i> ADMIN
+                                </span>
+                        <span th:if="${role.name == 'USER'}" class="badge bg-info role-badge">
+                                    <i class="bi bi-person"></i> USER
+                                </span>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex align-items-center">
+                                <span th:classappend="${user.enabled} ? 'status-enabled' : 'status-disabled'"
+                                      class="status-indicator"></span>
+                        <span th:if="${user.enabled}" class="text-success fw-bold">Activo</span>
+                        <span th:unless="${user.enabled}" class="text-danger fw-bold">Inactivo</span>
+                    </div>
+                </td>
+                <td class="text-center">
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-outline-primary btn-sm"
+                           th:href="@{/admin/users/edit/{id}(id=${user.id})}"
+                           title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <!-- Botones de eliminar con modal -->
+                        <button th:if="${user.id != 3}"
+                                type="button"
+                                class="btn btn-outline-danger btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteModal"
+                                th:data-user-id="${user.id}"
+                                th:data-user-name="${user.username}"
+                                title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        <button th:if="${user.id == 3}"
+                                type="button"
+                                class="btn btn-outline-danger btn-sm"
+                                disabled
+                                title="No se puede eliminar al administrador principal">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+
+            <tr th:if="${users == null or users.isEmpty()}">
+                <td colspan="6" class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-people display-1 text-muted opacity-25"></i>
+                    </div>
+                    <h4 class="text-muted mb-3">No hay usuarios</h4>
+                    <a class="btn btn-primary" href="/admin/users/new">
+                        <i class="bi bi-plus-circle"></i> Crear Primer Usuario
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Botón Volver -->
+    <div class="text-center mt-4">
+        <a href="/dashboard/admin" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Modal de Confirmación de Eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar al usuario <strong id="userNameToDelete"></strong>?</p>
+                <p class="text-danger">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <strong>Advertencia:</strong> Esta acción no se puede deshacer.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <a id="deleteConfirmButton" class="btn btn-danger" href="#">
+                    <i class="bi bi-trash"></i> Sí, Eliminar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5.1.3 JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteModal = document.getElementById('deleteModal');
+        if (deleteModal) {
+            deleteModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const userId = button.getAttribute('data-user-id');
+                const userName = button.getAttribute('data-user-name');
+
+                document.getElementById('userNameToDelete').textContent = userName;
+                document.getElementById('deleteConfirmButton').href = '/admin/users/delete/' + userId;
+            });
+        }
+
+        // Auto-dismiss alerts
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    });
+</script>
+</body>
+</html>
+

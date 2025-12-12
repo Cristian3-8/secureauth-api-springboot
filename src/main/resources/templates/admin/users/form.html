@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es" data-th-with="isEdit=${id != null}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-th-text="${isEdit} ? 'Editar Usuario - SecureAuth' : 'Nuevo Usuario - SecureAuth'">
+        Nuevo Usuario - SecureAuth
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .form-container {
+            max-width: 550px;
+            margin: 40px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-top: 4px solid #0d6efd;
+        }
+        .page-title {
+            color: #2c3e50;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #f1f1f1;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 8px;
+        }
+        .required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            border: none;
+            padding: 10px 25px;
+            font-weight: 500;
+            border-radius: 6px;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0a58ca 0%, #084298 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+        }
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .info-box {
+            background-color: #e8f4fd;
+            border-left: 4px solid #0d6efd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .password-note {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Botón volver -->
+    <div class="mb-4">
+        <a href="/admin/users" class="btn btn-outline-secondary">
+            ← Volver a lista de usuarios
+        </a>
+    </div>
+
+    <div class="form-container">
+        <!-- Título dinámico -->
+        <h2 class="page-title" data-th-text="${isEdit} ? '✏️ Editar Usuario' : '👤 Nuevo Usuario'">
+            Nuevo Usuario
+        </h2>
+
+        <!-- Mensajes informativos -->
+        <div class="info-box" data-th-if="${isEdit}">
+            <strong>⚠️ Modo Edición:</strong>
+            <span>Estás editando un usuario existente. La contraseña solo se cambiará si se ingresa una nueva.</span>
+        </div>
+
+        <div class="info-box" data-th-unless="${isEdit}">
+            <strong>ℹ️ Nuevo Usuario:</strong>
+            <span>Completa todos los campos para crear un nuevo usuario en el sistema.</span>
+        </div>
+
+        <!-- Formulario dinámico -->
+        <form data-th-action="${isEdit} ? '/admin/users/edit/' + ${id} : '/admin/users/new'"
+              method="post">
+
+            <!-- Campo ID oculto (solo en edición) -->
+            <input type="hidden" name="id" data-th-value="${id}">
+
+            <!-- Username -->
+            <div class="mb-4">
+                <label class="form-label required">Nombre de Usuario</label>
+                <input type="text" class="form-control" name="username"
+                       data-th-value="${username}"
+                       placeholder="Ej: juan.perez"
+                       data-th-readonly="${isEdit}"
+                       required>
+                <small class="password-note" data-th-if="${isEdit}">
+                    El username no puede modificarse después de creado
+                </small>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-4">
+                <label class="form-label required">Correo Electrónico</label>
+                <input type="email" class="form-control" name="email"
+                       data-th-value="${email}"
+                       placeholder="usuario@ejemplo.com" required>
+            </div>
+
+            <!-- Password (solo para nuevo o si se quiere cambiar) -->
+            <div class="mb-4">
+                <label class="form-label" data-th-unless="${isEdit}">Contraseña</label>
+                <label class="form-label" data-th-if="${isEdit}">Nueva Contraseña (dejar vacío para no cambiar)</label>
+                <input type="password" class="form-control" name="password"
+                       placeholder="Mínimo 6 caracteres"
+                       data-th-required="${!isEdit}">
+                <small class="password-note">
+                    <span data-th-unless="${isEdit}">La contraseña se almacenará encriptada con BCrypt</span>
+                    <span data-th-if="${isEdit}">Si no deseas cambiar la contraseña, deja este campo vacío</span>
+                </small>
+            </div>
+
+            <!-- Confirm Password (solo si hay password) -->
+            <div class="mb-4" id="confirmPasswordSection">
+                <label class="form-label" data-th-unless="${isEdit}">Confirmar Contraseña</label>
+                <label class="form-label" data-th-if="${isEdit}">Confirmar Nueva Contraseña</label>
+                <input type="password" class="form-control" name="confirmPassword"
+                       id="confirmPassword"
+                       placeholder="Repite la contraseña">
+            </div>
+
+            <!-- Rol -->
+            <div class="mb-4">
+                <label class="form-label required">Rol del Usuario</label>
+                <div class="d-flex gap-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="role"
+                               id="roleUser" value="USER"
+                               data-th-checked="${role == 'USER'}">
+                        <label class="form-check-label" for="roleUser">
+                            <span class="badge bg-success">USER</span> - Usuario normal
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="role"
+                               id="roleAdmin" value="ADMIN"
+                               data-th-checked="${role == 'ADMIN'}">
+                        <label class="form-check-label" for="roleAdmin">
+                            <span class="badge bg-primary">ADMIN</span> - Administrador
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Habilitado -->
+            <div class="mb-4">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" name="enabled"
+                           id="enabled" role="switch"
+                           data-th-checked="${enabled != false}">
+                    <label class="form-check-label" for="enabled">
+                        <strong>Usuario Habilitado</strong>
+                        <p class="password-note mb-0">
+                            Si se desactiva, el usuario no podrá iniciar sesión en el sistema
+                        </p>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-between border-top pt-4">
+                <a href="/admin/users" class="btn btn-outline-secondary px-4">
+                    Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary px-4">
+                        <span data-th-text="${isEdit} ? '💾 Guardar Cambios' : '➕ Crear Usuario'">
+                            Crear Usuario
+                        </span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Mostrar/ocultar confirmación de contraseña dinámicamente
+    const passwordField = document.querySelector('input[name="password"]');
+    const confirmSection = document.getElementById('confirmPasswordSection');
+
+    function toggleConfirmPassword() {
+        if (passwordField.value.trim() === '') {
+            confirmSection.style.display = 'none';
+            document.getElementById('confirmPassword').required = false;
+        } else {
+            confirmSection.style.display = 'block';
+            document.getElementById('confirmPassword').required = true;
+        }
+    }
+
+    passwordField.addEventListener('input', toggleConfirmPassword);
+    toggleConfirmPassword(); // Estado inicial
+
+    // Validar que las contraseñas coincidan
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const password = passwordField.value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (password && password !== confirmPassword) {
+            e.preventDefault();
+            alert('⚠️ Las contraseñas no coinciden. Por favor, verifica.');
+            document.getElementById('confirmPassword').focus();
+        }
+
+        // Confirmación antes de enviar
+        const isEdit = document.querySelector('[data-th-if="${isEdit}"]') !== null;
+        const action = isEdit ? 'guardar los cambios' : 'crear este usuario';
+
+        if (!confirm(`¿Estás seguro de ${action}?`)) {
+            e.preventDefault();
+        }
+    });
+</script>
+</body>
+</html>
