@@ -6,13 +6,19 @@
 
 Sistema completo de autenticación y gestión de usuarios implementado con Spring Boot 6 y Spring Security 6.
 
-✨ Características
+✨ Características: 
 ✅ Autenticación segura con Spring Security 6
+
 ✅ Dashboard dual (Administrador/Usuario normal)
+
 ✅ CRUD completo de usuarios
+
 ✅ Sistema de roles (ADMIN/USER) con permisos diferenciados
+
 ✅ Interfaz moderna con Bootstrap 5 responsive
+
 ✅ Validaciones backend y frontend
+
 ✅ Seguridad robusta: BCrypt, CSRF, protección de rutas
 
 🛠️ Tecnologías
